@@ -1,5 +1,6 @@
 import random
 from Users import Person
+import time
 
 class SlotMachine:
     def __init__(self, reels=3, symbols=None):
@@ -16,21 +17,13 @@ class Results:
         self.machine = machine
 
     def display_results(self) -> None:
-        print(f"Spinning... Result: {self.machine.spin()}")
+        print("Spinning")
+        for _ in range(3):
+            time.sleep(0.5)
+            print(".", end="", flush=True)
+        print(f"\nResult:\n{self.machine.spin()}")
 
     def check_win(self) -> bool:
         if not self.machine.result:
             return False
         return all(symbol == self.machine.result[0] for symbol in self.machine.result)
-
-# Usage
-my_machine = SlotMachine()
-game_handler = Results(my_machine)
-
-game_handler.display_results()
-print(f"Winner? {game_handler.check_win()}")
-player = Person("Subhan")
-player.login("1234")
-player.update_balance()
-player.balance += 100 if game_handler.check_win() else -10
-print(f"Current Balance: {player.balance}")
