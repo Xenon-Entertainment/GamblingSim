@@ -5,9 +5,14 @@ basedir = os.path.dirname(os.path.abspath(__file__))
 UserInfoFile = os.path.join(basedir, "UsersInfo.json")
 
 users_info = {}
-
-with open(UserInfoFile, "r") as file:
-    users_info = json.load(file)
+# Made sure to add this - a back up json unless there is corruption in the file.
+try:
+    with open(UserInfoFile, "r") as file:
+        users_info = json.load(file)
+except FileNotFoundError:
+    users_info = {}
+    with open(UserInfoFile, "w") as file:
+        json.dump(users_info, file)
 
 def str_ask(prompt):
     while True:
@@ -65,5 +70,6 @@ class Person:
             with open(UserInfoFile, "w") as file:
                 file.write(json.dumps(users_info, indent=4))
             return self.balance
+
 
         
