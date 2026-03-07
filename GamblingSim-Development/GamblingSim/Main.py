@@ -3,6 +3,8 @@ import string
 from Users import Person, str_ask, add_user
 from SlotMachine import SlotMachine, Results
 from BlackJack import BlackjackGame, play_blackjack
+#Change
+from Roulette import RouletteGame, play_roulette
 
 #Asks the user for signup or login
 def ask_signup_or_login() -> str:
@@ -37,9 +39,12 @@ def pick_game(game) -> string:
     elif game =="2":
         print("\nYou have chosen Blackjack!")
         return 2
+    elif game == "3":
+        print("\nYou have chosen Roulette!")
+        return 3
     else:
         print("\nInvalid choice. Please try again.")
-        return pick_game(str_ask("\nWhich game do you want to play? (1) Slot Machine\nOr,\n(2) Blackjack? Enter 1 or 2:\n~"))
+        return pick_game(str_ask("\nWhich game do you want to play? (1) Slot Machine\nOr,\n(2) Blackjack\nOr,\n(3) Roulette\nEnter 1, 2, or 3:\n~"))
 
 def play_game(choice, player) -> None:
     if choice == 1:
@@ -54,15 +59,21 @@ def play_game(choice, player) -> None:
         my_machine = BlackjackGame()
         play_blackjack(player)
 
+    elif choice == 3:
+        my_machine = RouletteGame()
+        play_roulette(player)
+
 #Runs the game in a "main" file
 def main() -> None:
     choice = ask_signup_or_login()
     player = handle_signup_or_login(choice)
     #Player is in the person class, Don't worry
-    game_choice = pick_game(choice := str_ask("\nWhich game do you want to play? \n(1) Slot Machine or, \n(2) Blackjack?\nEnter 1 or 2:\n~"))
+    game_choice = pick_game(choice := str_ask("\nWhich game do you want to play? \n(1) Slot Machine or, \n(2) Blackjack?\nOr,\n(3) Roulette\nEnter 1, 2, or 3:\n~"))
     play_game(game_choice, player)
 
 
     
 
 main()
+
+
