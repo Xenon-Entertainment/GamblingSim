@@ -3,13 +3,20 @@ import string
 
 #(INTEGRATION) add ur game here
 from Users import Person, str_ask, add_user, UserInfoFile
+
+#Games
 from SlotMachine import SlotMachine, Results
 from BlackJack import BlackjackGame, play_blackjack
 from Roulette import RouletteGame, play_roulette
 from Snap import SnapGame, play_snap
 from horse_bets import Bet
 from coin_Flip import Flip
-default = f"\nWhich game do you want to play? (1) Slot Machine\nOr,\n(2) Blackjack\nOr,\n(3) Roulette\n(4) Snap \n(5) Horse Bet\n(6) Coin Flip\nEnter 1, 2, 3, or 4:\n~"
+
+# Jobs
+from Job import JobSession, start_earning
+
+default = f"\nWhich game do you want to play?\n(1) Slot Machine\nOr,\n(2) Blackjack\nOr,\n(3) Roulette\nOr, \n(4) Snap\nOr, \n(5) Horse Bet\nOr, \n(6) Coin Flip\nOr, \n(b) Do you want to do a shift to earn money so you can gamble more?\nEnter 1, 2, 3, 4, 5, 6, or enter b:\n~"
+
 #Asks the user for signup or login
 def ask_signup_or_login() -> str:
     while True:
@@ -57,6 +64,9 @@ def pick_game(game) -> string:
     elif game == "6":
         print("\nYou have Chosen Coin Flip!")
         return 6
+    elif game == "b":
+        print("\nYou have chosen employment!")
+        return 100
     else:
         print("\nInvalid choice. Please try again.")
         #(INTEGRATION) add on option for your game here just follow format and you'll be good
@@ -83,6 +93,7 @@ def play_game(choice, player) -> None:
     elif choice == 4:
         my_machine = SnapGame()
         play_snap(player)
+
     elif choice == 5:
         sus = Bet()
         game = sus.place_bet()
@@ -90,6 +101,7 @@ def play_game(choice, player) -> None:
             player.balance += 100
         else:
             player.balance -= 10
+
     elif choice == 6:
         sus = Flip()
         game = sus.play()
@@ -97,12 +109,17 @@ def play_game(choice, player) -> None:
             player.balance += 100
         else:
             player.balance -= 10
+    
+    elif choice == 100:
+        my_machine = JobSession(player)
+        start_earning(player)
+
 
 def repeat_game(player) -> None:
     while True:
         choice = str_ask("\nDo you want to play another game? (Y/N),\nOr, view users info(V): ").upper()
         if choice == "Y":
-            game_choice = pick_game(str_ask("\nWhich game do you want to play? (1) Slot Machine\nOr,\n(2) Blackjack\nOr,\n(3) Roulette\n(4) Snap\nEnter 1, 2, 3, or 4:\n~"))
+            game_choice = pick_game(str_ask("\nWhich game do you want to play? (1) Slot Machine\nOr,\n(2) Blackjack\nOr,\n(3) Roulette\nOr, \n(4) Snap\nOr, \n(5) Horse Bet\nOr, \n(6) Coin Flip\nOr, \n(b) Job\nEnter 1, 2, 3, 4, 5, 6, or enter b:\n~"))
             play_game(game_choice, player)
         elif choice == "V":
             users_info_view(printable=True)
@@ -154,6 +171,9 @@ def main() -> None:
     
 
 main()
+
+
+
 
 
 
