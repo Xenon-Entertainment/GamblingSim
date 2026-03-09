@@ -7,6 +7,7 @@ from SlotMachine import SlotMachine, Results
 from BlackJack import BlackjackGame, play_blackjack
 from Roulette import RouletteGame, play_roulette
 from Snap import SnapGame, play_snap
+from horse_bets import Bet
 
 #Asks the user for signup or login
 def ask_signup_or_login() -> str:
@@ -49,6 +50,10 @@ def pick_game(game) -> string:
     elif game == "4":
         print("\nYou have chosen Snap!")
         return 4
+    elif game == "5":
+        print("\nYou have Chosen Horse Bet!")
+        return 5
+        
     else:
         print("\nInvalid choice. Please try again.")
         #(INTEGRATION) add on option for your game here just follow format and you'll be good
@@ -75,7 +80,13 @@ def play_game(choice, player) -> None:
     elif choice == 4:
         my_machine = SnapGame()
         play_snap(player)
-
+    elif choice == 5:
+        sus = Bet()
+        game = sus.place_bet()
+        if game:
+            player.balance += 100
+        else:
+            player.balance -= 10
 
 def repeat_game(player) -> None:
     while True:
@@ -133,6 +144,7 @@ def main() -> None:
     
 
 main()
+
 
 
 
