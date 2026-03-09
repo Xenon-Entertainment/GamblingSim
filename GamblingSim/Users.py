@@ -5,71 +5,79 @@ basedir = os.path.dirname(os.path.abspath(__file__))
 UserInfoFile = os.path.join(basedir, "UsersInfo.json")
 
 users_info = {}
-# Made sure to add this - a back up json unless there is corruption in the file.
 try:
     with open(UserInfoFile, "r") as file:
         users_info = json.load(file)
-except FileNotFoundError:
+except (FileNotFoundError, json.JSONDecodeError):
     users_info = {}
-    with open(UserInfoFile, "w") as file:
-        json.dump(users_info, file)
 
 def str_ask(prompt):
     while True:
-        value = input(prompt)
-        if value.strip() == "":
-            print("Input cannot be empty. Please try again.")
-        else:
-            return value
+        value = input(prompt).strip()
+        if value == "":
+            print("Input cannot be empty.")
+            continue
+        return value
 
-#Methods adds a new user to the users_info dictionary and updates the JSON file
+#Still the same as subhans method kinda, but it allows more things
 def add_user(name, password) -> bool:
     if name in users_info:
         print("User already exists.")
         return False
-    else:
-        users_info[name] = {"password": password, "balance": 1000}
-        with open("UsersInfo.json", "w") as file:
-            file.write(json.dumps(users_info, indent=4))
-        print(f"User {name} added successfully.")
-        return True
+    
+    users_info[name] = {
+        "password": password, 
+        "balance": 1000,
+        "persistent_session_total": 0,
+        "last_session_time": 0
+    }
+    with open(UserInfoFile, "w") as file:
+        json.dump(users_info, file, indent=4)
+    print(f"User {name} added.")
+    return True
 
 class Person:
-    # Initialize the Person class with name and balance
+    # still initializes the person class with name and balance but with added job data
     def __init__(self, balance=0):
         self.name = None
         self.balance = balance
+        self.persistent_session_total = 0
+        self.last_session_time = 0
     
-    # Method to handle user login
+    #Handles user login but with a lot safer handling and it also loads the job data for the user
+    #Still sees if user is authenticated and welcomes and if not prints error message
     def login(self, name, password) -> bool:
-        self.name = name
-
-        #Checks if the username exists in the users_info dictionary and if the password matches, then welcomes the user. Otherwise, it prints an error message.
-        if self.name in users_info.keys():
-            if users_info[self.name]["password"] == password:
-                print(f"Welcome, {self.name}!")
-                return True
-            else:
-                print("Invalid password.")
-                return False
-        else:
-            print("User not found.")
-            return False
+        if name in users_info and users_info[name]["password"] == password:
+            self.name = name
+            data = users_info[name]
+            self.balance = data.get("balance", 0)
+            self.persistent_session_total = data.get("persistent_session_total", 0)
+            self.last_session_time = data.get("last_session_time", 0)
+            print(f"Welcome, {self.name}!")
+            return True
+        print("User not found or incorrect password.")
+        return False
     
-    # Method to update the user's balance from the users_info dictionary and optionally export it back to the JSON file
-    def update_balance(self, export_balance = False) -> int:
-        if export_balance:
-            with open(UserInfoFile, "w") as file:
-                users_info[self.name]["balance"] = self.balance
-                file.write(json.dumps(users_info, indent=4))
-            
-            print("\nBalance exported and updated successfully")
-
-        else:
-            self.balance = users_info[self.name]["balance"]
-            with open(UserInfoFile, "w") as file:
-                file.write(json.dumps(users_info, indent=4))
+    # Method to update the user's balance and job data in the JSON file(users_info), or load it if export_balance is False
+    def update_balance(self, export_balance=False) -> int:
+        if not self.name:
             return self.balance
 
+        if export_balance:
+            users_info[self.name].update({
+                "balance": self.balance,
+                "persistent_session_total": self.persistent_session_total,
+                "last_session_time": self.last_session_time
+            })
+            with open(UserInfoFile, "w") as file:
+                json.dump(users_info, file, indent=4)
+        else:
+            data = users_info[self.name]
+            self.balance = data.get("balance", 0)
+            self.persistent_session_total = data.get("persistent_session_total", 0)
+            self.last_session_time = data.get("last_session_time", 0)
+            
+        return self.balance
 
         
+
