@@ -3,16 +3,9 @@
         "password": "1234",
         "balance": 1870
     },
-    "EPSTEIN": {
-        "password": "ISLAND",
-        "balance": 970
-    },
-    "niggerman": {
-        "password": "NIggg@m@1",
-        "balance": 1000
-    },
     "Mustard": {
         "password": "gooner",
         "balance": -10
     }
+
 }
