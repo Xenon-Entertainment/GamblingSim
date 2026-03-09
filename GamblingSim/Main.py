@@ -8,7 +8,8 @@ from BlackJack import BlackjackGame, play_blackjack
 from Roulette import RouletteGame, play_roulette
 from Snap import SnapGame, play_snap
 from horse_bets import Bet
-
+from coin_Flip import Flip
+default = f"\nWhich game do you want to play? (1) Slot Machine\nOr,\n(2) Blackjack\nOr,\n(3) Roulette\n(4) Snap \n(5) Horse Bet\n(6) Coin Flip\nEnter 1, 2, 3, or 4:\n~"
 #Asks the user for signup or login
 def ask_signup_or_login() -> str:
     while True:
@@ -53,11 +54,13 @@ def pick_game(game) -> string:
     elif game == "5":
         print("\nYou have Chosen Horse Bet!")
         return 5
-        
+    elif game == "6":
+        print("\nYou have Chosen Coin Flip!")
+        return 6
     else:
         print("\nInvalid choice. Please try again.")
         #(INTEGRATION) add on option for your game here just follow format and you'll be good
-        return pick_game(str_ask("\nWhich game do you want to play? (1) Slot Machine\nOr,\n(2) Blackjack\nOr,\n(3) Roulette\n(4) Snap\nEnter 1, 2, 3, or 4:\n~"))
+        return pick_game(str_ask())
 
 def play_game(choice, player) -> None:
     if choice == 1:
@@ -83,6 +86,13 @@ def play_game(choice, player) -> None:
     elif choice == 5:
         sus = Bet()
         game = sus.place_bet()
+        if game:
+            player.balance += 100
+        else:
+            player.balance -= 10
+    elif choice == 6:
+        sus = Flip()
+        game = sus.play()
         if game:
             player.balance += 100
         else:
@@ -136,7 +146,7 @@ def main() -> None:
             continue
 
     #(INTEGRATION) Add an option for your game here just follow format and you'll be good
-    game_choice = pick_game(choice := str_ask("\nWhich game do you want to play? \n(1) Slot Machine or, \n(2) Blackjack or,\n(3) Roulette or, \n(4) Snap?\nEnter 1, 2, 3, or 4:\n~"))
+    game_choice = pick_game(choice := str_ask(default))
     play_game(game_choice, player)
     repeat_game(player)
 
