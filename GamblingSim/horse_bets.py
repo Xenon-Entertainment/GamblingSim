@@ -13,20 +13,23 @@ class Bet:
         self.amount = 0
         self.chosen = None
     def place_bet(self):
+        horse_weights = [15,15,15,15,15,25]
+        indices = list(range(1, self.horses + 1))
+        
         available_colours = self.colours.copy()
         r.shuffle(available_colours)
         print("There are 6 available horses.")
         for i in range(self.horses):
-            colour = self.colours[i % len(self.colours)]
+            colour = available_colours[i % len(available_colours)]
             print(f"Horse {i + 1} is colour {colour}")
         while True:
             try:
                 horse_choice = int(input(f"\nWhich horse are you betting on? (1-{self.horses}): "))
                 if 1 <= horse_choice:
                     self.chosen = horse_choice
-                    horse_colour = self.colours[(self.chosen - 1) % len(self.colours)]
+                    horse_colour = available_colours[(self.chosen - 1) % len(available_colours)]
                     print(f"Bet placed on Horse {horse_choice}")
-                    winner = r.randint(1,6)
+                    winner = r.choices(indices, weights=horse_weights, k=1)[0]
                     if winner == self.chosen:
                         print(f"Horse {horse_colour} has won!")
                         return True
@@ -41,3 +44,4 @@ class Bet:
                 print("Enter a valid horse number")
                
                 
+
