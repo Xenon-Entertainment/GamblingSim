@@ -1,0 +1,12 @@
+{
+    "mang0": {
+        "password": "1234",
+        "balance": 3870,
+        "persistent_session_total": 0,
+        "last_session_time": 0
+    },
+    "Mustard": {
+        "password": "gooner",
+        "balance": -10
+    }
+}
