@@ -1,5 +1,5 @@
 # GamblingSim
-GamblingLegally
+*GamblingLegally*
 
 ___________________________INSTRUCTIONS________________________________________________________________________
 
