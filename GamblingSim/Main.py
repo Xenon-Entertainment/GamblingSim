@@ -7,7 +7,7 @@ from SlotMachine import SlotMachine, Results
 from BlackJack import BlackjackGame, play_blackjack
 from Roulette import RouletteGame, play_roulette
 from Snap import SnapGame, play_snap
-from horse_bets import Bet
+from horse_bets import play_horse_race
 from coin_Flip import Flip
 
 # Jobs
@@ -75,9 +75,7 @@ def play_game(choice, player) -> None:
     elif choice == 4:
         play_snap(player)
     elif choice == 5:
-        sus = Bet()
-        if sus.place_bet(): player.balance += 100
-        else: player.balance -= 10
+        play_horse_race(player)
     elif choice == 6:
         sus = Flip()
         if sus.play(): player.balance += 100
@@ -124,6 +122,10 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+
+
 
 
 
