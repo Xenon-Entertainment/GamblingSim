@@ -1,2 +1,0 @@
-# GamblingSim
-GamblingLegally
