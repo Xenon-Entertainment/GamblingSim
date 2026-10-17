@@ -1,6 +1,7 @@
 import random
 import time
 from Users import Person, str_ask
+from Casinos import get_casino
 
 class BlackjackGame:
     def __init__(self):
@@ -52,9 +53,10 @@ def get_valid_input(prompt, valid_options=None, is_int=False, range_limit=None, 
         except ValueError:
             print("(!) Invalid input. Pretty please enter a number.")
 
-def play_blackjack(player: Person):
+def play_blackjack(player: Person, casino=None):
     game = BlackjackGame()
-    MAX_BET = 500 # Table limit
+    casino = casino or get_casino(getattr(player, "casino_tier", "local"))
+    MAX_BET = casino["bet_limits"]["blackjack"]
     
     print(f"\n{'='*30}\n      BLACKJACK TABLE      \n{'='*30}")
     print(f" Player: {player.name} | Balance: ${player.balance} | Table Limit: ${MAX_BET}")
@@ -98,7 +100,7 @@ def play_blackjack(player: Person):
         d_val = game.get_val(game.d_hand)
         if p_val <= 21:
             print("\nDealer's turn", end="", flush=True)
-            while d_val < 17:
+            while d_val < casino["blackjack_dealer_stand"]:
                 for _ in range(3):
                     time.sleep(0.3); print(".", end="", flush=True)
                 game.d_hand.append(game.deck.pop())
@@ -124,10 +126,7 @@ def play_blackjack(player: Person):
         else:
             print("It's a draw! Your bet was returned.")
 
-    try:
-        player.update_balance(export_balance=True)
-    except:
-        pass
+    player.update_balance(export_balance=True)
     print(f"New Balance: ${player.balance}\n")
 
 # tester

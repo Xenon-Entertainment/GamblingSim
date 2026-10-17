@@ -1,0 +1,15 @@
+{
+    "Jork": {
+        "password": "MeCox",
+        "balance": 70249,
+        "persistent_session_total": 0,
+        "last_session_time": 1792272193.417483,
+        "casino_tier": "local",
+        "unlocked_casinos": [
+            "local",
+            "high_roller",
+            "vip",
+            "pearl"
+        ]
+    }
+}

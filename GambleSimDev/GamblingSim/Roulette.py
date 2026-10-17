@@ -2,16 +2,17 @@ import random
 import time
 #change
 from Users import Person, str_ask
+from Casinos import get_casino
 
 class RouletteGame:
     # Creates the roulette wheel first with red numbers and then the rest are black other than 0 which is green
     def __init__(self):
         self.red = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36}
 
-    def spin(self):
-        res = random.randint(0, 36)
+    def spin(self, extra_zeros=0):
+        res = random.randint(0, 36 + extra_zeros)
         # Color landed on logic
-        color = "GREEN" if res == 0 else ("RED" if res in self.red else "BLACK")
+        color = "GREEN" if res == 0 or res > 36 else ("RED" if res in self.red else "BLACK")
         return res, color
 
 def get_valid_input(prompt, valid_options=None, is_int=False, range_limit=None, max_val=None):
@@ -40,9 +41,10 @@ def get_valid_input(prompt, valid_options=None, is_int=False, range_limit=None, 
         except ValueError:
             print("(!) Invalid input. Pretty please enter a number.")
 
-def play_roulette(player):
+def play_roulette(player, casino=None):
     game = RouletteGame()
-    MAX_BET = 500 # Table limit
+    casino = casino or get_casino(getattr(player, "casino_tier", "local"))
+    MAX_BET = casino["bet_limits"]["roulette"]
     
     print(f"\n{'='*30}\n      ROULETTE TABLE      \n{'='*30}")
     print(f" Player: {player.name} | Balance: ${player.balance} | Table Limit: ${MAX_BET}")
@@ -65,16 +67,17 @@ def play_roulette(player):
     for _ in range(3):
         time.sleep(0.5); print(".", end="", flush=True)
     
-    res_n, res_c = game.spin()
-    print(f"\n>> BALL LANDED ON: {res_n} ({res_c}) <<")
+    res_n, res_c = game.spin(casino["roulette_extra_zeros"])
+    displayed_number = "00" if res_n == 37 else ("000" if res_n == 38 else str(res_n))
+    print(f"\n>> BALL LANDED ON: {displayed_number} ({res_c}) <<")
 
     # Check win 
     win_conditions = {
         'N': res_n == target_num,
         'R': res_c == "RED",
         'B': res_c == "BLACK",
-        'E': res_n % 2 == 0 and res_n != 0,
-        'O': res_n % 2 != 0
+        'E': 0 < res_n <= 36 and res_n % 2 == 0,
+        'O': 0 < res_n <= 36 and res_n % 2 != 0
     }
     
     if win_conditions[choice]:
@@ -100,8 +103,7 @@ def play_roulette(player):
         player.balance -= bet
         print(f"Loser! You lost ${bet}.")
 
-    try: player.update_balance(export_balance=True)
-    except: pass
+    player.update_balance(export_balance=True)
     print(f"New Balance: ${player.balance}\n")
 
 #Gulp subhan this is my lil test guy because your that guy and the goat so you can link it

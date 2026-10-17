@@ -1,6 +1,7 @@
 import random
 import time
 from Users import Person, str_ask
+from Casinos import get_casino
 
 
 class Flip:
@@ -9,8 +10,12 @@ class Flip:
         self.choice = None
         self.result = None
 
-    def flip_coin(self):
-        return random.choice(self.coin_faces)
+    def flip_coin(self, player_win_probability=0.5):
+        if self.choice is None:
+            return random.choice(self.coin_faces)
+        return self.choice if random.random() < player_win_probability else (
+            "Tails" if self.choice == "Heads" else "Heads"
+        )
 
     def show_result(self):
         print("\nFlipping coin", end="", flush=True)
@@ -21,7 +26,7 @@ class Flip:
 
         print(f"\n\nThe coin landed on: {self.result}!")
 
-    def play(self) -> bool:
+    def play(self, player_win_probability=0.5) -> bool:
         print(f"\n{'=' * 30}")
         print("          COIN FLIP")
         print(f"{'=' * 30}")
@@ -44,7 +49,7 @@ class Flip:
 
         print(f"\nYour choice: {self.choice}")
 
-        self.result = self.flip_coin()
+        self.result = self.flip_coin(player_win_probability)
         self.show_result()
 
         print(f"\n{'>' * 3} FINAL RESULTS {'<' * 3}")
@@ -57,9 +62,10 @@ class Flip:
         return False
 
 
-def play_coin_flip(player: Person):
+def play_coin_flip(player: Person, casino=None):
     game = Flip()
-    MAX_BET = 100
+    casino = casino or get_casino(getattr(player, "casino_tier", "local"))
+    MAX_BET = casino["bet_limits"]["coin_flip"]
 
     print(f"\n{'=' * 30}")
     print("          COIN FLIP")
@@ -85,7 +91,7 @@ def play_coin_flip(player: Person):
             print("(!) Please enter a valid whole number.")
 
     # Play the game
-    if game.play():
+    if game.play(casino["coin_flip_player_win_probability"]):
         print(f"\nYou won ${bet}!")
         player.balance += bet
     else:

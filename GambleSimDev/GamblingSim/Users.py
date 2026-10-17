@@ -1,5 +1,6 @@
 import json
 import os
+from Casinos import CASINOS, DEFAULT_CASINO
 
 basedir = os.path.dirname(os.path.abspath(__file__))
 UserInfoFile = os.path.join(basedir, "UsersInfo.json")
@@ -29,7 +30,9 @@ def add_user(name, password) -> bool:
         "password": password, 
         "balance": 1000,
         "persistent_session_total": 0,
-        "last_session_time": 0
+        "last_session_time": 0,
+        "casino_tier": DEFAULT_CASINO,
+        "unlocked_casinos": [DEFAULT_CASINO]
     }
     with open(UserInfoFile, "w") as file:
         json.dump(users_info, file, indent=4)
@@ -43,6 +46,8 @@ class Person:
         self.balance = balance
         self.persistent_session_total = 0
         self.last_session_time = 0
+        self.casino_tier = DEFAULT_CASINO
+        self.unlocked_casinos = [DEFAULT_CASINO]
     
     #Handles user login but with a lot safer handling and it also loads the job data for the user
     #Still sees if user is authenticated and welcomes and if not prints error message
@@ -53,6 +58,17 @@ class Person:
             self.balance = data.get("balance", 0)
             self.persistent_session_total = data.get("persistent_session_total", 0)
             self.last_session_time = data.get("last_session_time", 0)
+            self.casino_tier = data.get("casino_tier", DEFAULT_CASINO)
+            unlocked_casinos = data.get("unlocked_casinos")
+            casino_tiers = list(CASINOS)
+            if not isinstance(unlocked_casinos, list):
+                unlocked_casinos = []
+            current_index = casino_tiers.index(self.casino_tier) if self.casino_tier in CASINOS else 0
+            self.unlocked_casinos = []
+            for index, tier in enumerate(casino_tiers):
+                if index > current_index and tier not in unlocked_casinos:
+                    break
+                self.unlocked_casinos.append(tier)
             print(f"Welcome, {self.name}!")
             return True
         print("User not found or incorrect password.")
@@ -67,7 +83,9 @@ class Person:
             users_info[self.name].update({
                 "balance": self.balance,
                 "persistent_session_total": self.persistent_session_total,
-                "last_session_time": self.last_session_time
+                "last_session_time": self.last_session_time,
+                "casino_tier": self.casino_tier,
+                "unlocked_casinos": self.unlocked_casinos
             })
             with open(UserInfoFile, "w") as file:
                 json.dump(users_info, file, indent=4)
@@ -80,4 +98,3 @@ class Person:
         return self.balance
 
         
-

@@ -2,6 +2,7 @@ import random
 import time
 #change (i use change so i dont forget how to integrate)
 from Users import Person, str_ask
+from Casinos import get_casino
 
 class SnapGame:
     def __init__(self):
@@ -33,9 +34,10 @@ def get_valid_input(prompt, valid_options=None, is_int=False, max_val=None):
         except ValueError:
             print("(!) Invalid input. Please enter a number.")
 
-def play_snap(player):
+def play_snap(player, casino=None):
+    casino = casino or get_casino(getattr(player, "casino_tier", "local"))
     game = SnapGame()
-    MAX_BET = 200 # I think we get that this is the table limit from roulette
+    MAX_BET = casino["bet_limits"]["snap"]
     player_hand, dealer_hand = game.deal()
     print(f"\n{'='*30}\n       CASINO SNAP     \n{'='*30}")
     print(f" Player: {player.name} | Balance: ${player.balance} | Table Limit: ${MAX_BET}")
@@ -72,12 +74,12 @@ def play_snap(player):
             reaction_time = end_time - start_time
 
             # Dealer reaction simulation
-            dealer_speed = random.uniform(0.8, 1.8)
+            dealer_speed = random.uniform(*casino["snap_dealer_speed"])
 
             if reaction == "S" and reaction_time < dealer_speed:
                 print(f"\nSpeedy Boy! You snapped in {reaction_time:.2f}s!")
                 print(f"Dealer was a bit behind ({dealer_speed:.2f}s).")
-                print(f"You win all the money and can buy your house back: ${pot}")
+                print(f"You win ${bet}!")
                 player.balance += bet
                 break
             else:
@@ -92,10 +94,7 @@ def play_snap(player):
                 print("\nOut of cards! It's a Draw. Bet returned.")
                 break
 
-    try: 
-        player.update_balance(export_balance=True)
-    except: 
-        pass
+    player.update_balance(export_balance=True)
     print(f"New Balance: ${player.balance}\n")
 
 # Tester guy

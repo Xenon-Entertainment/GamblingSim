@@ -1,6 +1,7 @@
 import time
 import os
 import sys
+from Casinos import get_casino
 
 # Standard Windows library for keyboard buffer clearing so itll work on thonny hopefully :) i learnt something new 
 try:
@@ -9,10 +10,11 @@ except ImportError:
     msvcrt = None
 
 class JobSession:
-    def __init__(self, player):
+    def __init__(self, player, casino=None):
         self.player = player
-        self.pay_per_press = 10
-        self.max_session_earnings = 200
+        self.casino = casino or get_casino(getattr(player, "casino_tier", "local"))
+        self.pay_per_press = self.casino["job_pay_per_press"]
+        self.max_session_earnings = self.casino["job_max_session_earnings"]
         self.cooldown_period = 60 
         self.session_total = getattr(self.player, 'persistent_session_total', 0)
 
@@ -79,7 +81,6 @@ class JobSession:
         #separator for clarity when returning to menu
         print("\n" + "="*30)
 
-def start_earning(player):
-    job = JobSession(player)
+def start_earning(player, casino=None):
+    job = JobSession(player, casino)
     job.start_work()
-
